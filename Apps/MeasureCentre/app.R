@@ -66,6 +66,13 @@ ui <- fluidPage(
                   value = 1,
                   step = .25,
                   animate = list(interval = 100)),
+      checkboxGroupInput("elements",
+                         "Output Elements:",
+                         choices = c("Histogram" = "histogram",
+                           "Boxplot" = "boxplot",
+                           "Measures of Central Tendency" = "center",
+                           "Measures of Spread" = "spread",
+                           "Five Number Summary" = "fivenum")),
       submitButton("Update View", icon("refresh"))
     ),
         
@@ -152,15 +159,29 @@ server <- function(input, output) {
 
   output$summText <- renderUI({
     mydata <- getdata()
+
+    html <- "Summary Statistics<br /><br />"
     
-    str0 <- "Measures of Central Tendency"
-    str1 <- paste("  Mean:", round(mean(mydata$x),2))
-    str2 <- paste("  Median: ", round(median(mydata$x),2))
-    str3 <- paste("  Trimmed Mean (5%): ", round(mean(mydata$x,.025),2))
-    str4 <- paste("  Trimmed Mean (10%): ", round(mean(mydata$x,.05),2))
+    if("center" %in% input$elements){
+      str0 <- "Measures of Central Tendency"
+      str1 <- paste("  Mean:", round(mean(mydata$x),2))
+      str2 <- paste("  Median: ", round(median(mydata$x),2))
+      str3 <- paste("  Trimmed Mean (5%): ", round(mean(mydata$x,.025),2))
+      str4 <- paste("  Trimmed Mean (10%): ", round(mean(mydata$x,.05),2))
     
-    HTML(paste(str1, str2, str3, str4, sep = "<br/>"))
-          
+      html <- paste(html,str1, str2, str3, str4, sep = "<br/>")
+    }
+
+    if("spread" %in% input$elements){
+      str0 <- "Measures of Spread"
+      str1 <- paste("  Variance:", round(var(mydata$x),2))
+      str2 <- paste("  Standard Deviation: ", round(sd(mydata$x),2))
+      str3 <- paste("  Fourth Spread (IQR): ", round(c(-1,1) %*% quantile(mydata$x,c(.25,.75)),2))
+    
+      html <- paste(html,str1, str2, str3, str4, sep = "<br/>")
+    }
+      
+     HTML(html)     
   })
 }
 
