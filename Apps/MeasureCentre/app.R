@@ -92,7 +92,7 @@ server <- function(input, output) {
   mydata <<- reactive({
     input$doit
 
-    set.seed(inpute$seed)
+    set.seed(input$seed)
     
     tibble(x=c(rnorm(input$n - input$outliers, 0, 1),
                rnorm(input$outliers, input$outlierseverity * ifelse(input$skew < 0, -1, 1),1))) %>%
