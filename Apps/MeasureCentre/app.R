@@ -113,7 +113,8 @@ server <- function(input, output) {
         
         ggplot(mydata(), aes(x = x)) + 
           geom_histogram(breaks = breakseq) +
-          ylim(c(0, 1.2 * height)) + 
+          ylim(c(0, 1.2 * height)) +
+          xlim(1.2 * c(-1,1) * max(abs(mydata()$x))) + 
           labs(title = paste0("n = ", input$n, ", ",
                               "Skew = ", round(input$skew,2))) +
           annotate("segment", x = c(meanx, medianx), y = c(0,0),
@@ -143,7 +144,8 @@ server <- function(input, output) {
     input$doit
 
     ggplot(mydata(), aes(x=x)) +
-      geom_boxplot()
+      geom_boxplot() +
+      xlim(1.2 * c(-1,1) * max(abs(mydata()$x)))
   })
 
   output$summText <- renderUI({
