@@ -80,8 +80,8 @@ ui <- fluidPage(
     ## Show a plot of the generated distribution
     mainPanel(
       tags$div(HTML("Upper text...")),
-      plotOutput("distPlot"),
-      plotOutput("boxPlot"),
+      plotOutput("distPlot", height = "250px"),
+      plotOutput("boxPlot", height = "250px"),
       htmlOutput("summText"),
       tags$div(HTML("Lower text.."))
           ## <ol>
@@ -168,7 +168,7 @@ server <- function(input, output) {
   output$summText <- renderUI({
     mydata <- getdata()
 
-    html <- "Summary Statistics<br /><br />"
+    html <- ""
     
     if("center" %in% input$elements){
       str0 <- "Measures of Central Tendency"
@@ -177,7 +177,7 @@ server <- function(input, output) {
       str3 <- paste("  Trimmed Mean (5%): ", round(mean(mydata$x,.025),2))
       str4 <- paste("  Trimmed Mean (10%): ", round(mean(mydata$x,.05),2))
     
-      html <- paste(html,str1, str2, str3, str4, sep = "<br/>")
+      html <- paste(html,str0,str1, str2, str3, str4,"<br/><br/>", sep = "<br/>")
     }
 
     if("spread" %in% input$elements){
@@ -186,10 +186,21 @@ server <- function(input, output) {
       str2 <- paste("  Standard Deviation: ", round(sd(mydata$x),2))
       str3 <- paste("  Fourth Spread (IQR): ", round(c(-1,1) %*% quantile(mydata$x,c(.25,.75)),2))
     
-      html <- paste(html,str1, str2, str3, str4, sep = "<br/>")
+      html <- paste(html,str0,str1, str2, str3, str4, "<br/><br/>" ,sep = "<br/>")
     }
-      
-     HTML(html)     
+
+    if("fivenum" %in% input$elements){
+      str0 <- "Five Number Summary"
+      str1 <- paste("  Minimum:", round(min(mydata$x),2))
+      str2 <- paste("  First quartile:", round(quantile(mydata$x,.25),2))
+      str3 <- paste("  Median:", round(median(mydata$x),2))
+      str4 <- paste("  Third quartile:", round(quantile(mydata$x,.75),2))
+      str5 <- paste("  Maximum:", round(max(mydata$x),2))
+    
+      html <- paste(html,str0,str1, str2, str3, str4, str5,sep = "<br/>")
+    }
+     
+    HTML(html)     
   })
 }
 
