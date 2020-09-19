@@ -128,6 +128,7 @@ server <- function(input, output) {
           xlim(c(-lim - bw, lim + bw)) + 
           labs(title = paste0("n = ", input$n, ", ",
                               "Skew = ", round(input$skew,2))) +
+          ylab("Frequency") + 
           annotate("segment", x = c(meanx, medianx), y = c(0,0),
                    xend = c(meanx, medianx), yend = c(height, height),
                    size = 1, colour = c(4,2)) +
@@ -162,6 +163,7 @@ server <- function(input, output) {
         
     ggplot(mydata, aes(x=x)) +
       geom_boxplot() +
+      ylab("") + 
       xlim(c(-lim - bw, lim + bw))
   })
 
