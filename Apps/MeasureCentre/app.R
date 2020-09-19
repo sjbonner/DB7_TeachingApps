@@ -79,11 +79,12 @@ ui <- fluidPage(
         
     ## Show a plot of the generated distribution
     mainPanel(
-      tags$div(HTML("Upper text...")),
+      tags$div(HTML("This app allows you to explore how pictorial and numerical summaries of a unimodal distribution change as you modify the characteristics of the distribution. Variables you can control include the size of the sample (n), the degree of skewness, and the number of outliers added into the distribution and their severity. Changing the random seed will generate different samples. You may use the checkboxes to select which output to display. <br/><br/>Try to guess how the summaries will change before you hit the update button!")),
       plotOutput("distPlot", height = "250px"),
       plotOutput("boxPlot", height = "250px"),
       htmlOutput("summText"),
-      tags$div(HTML("Lower text.."))
+      tags$div(HTML("Created by Simon Bonner based on code by Devan Becker.")),
+      tags$div(HTML("GitHub: <a href =\"https://github.com/sjbonner/DB7_TeachingApps\" target =\"_blank\">sjbonner/DB7_TeachingApps<a/>."))
           ## <ol>
           ##     <li>Set sd = 1. What value of the IQR makes this look the most 'Normal'?</li>
           ##     <li>Calculate the IQR of a theoretical normal distribution.</li>
@@ -126,8 +127,6 @@ server <- function(input, output) {
           geom_histogram(breaks = breakseq) +
           ylim(c(0, 1.2 * height)) +
           xlim(c(-lim - bw, lim + bw)) + 
-          labs(title = paste0("n = ", input$n, ", ",
-                              "Skew = ", round(input$skew,2))) +
           ylab("Frequency") + 
           annotate("segment", x = c(meanx, medianx), y = c(0,0),
                    xend = c(meanx, medianx), yend = c(height, height),
@@ -145,11 +144,6 @@ server <- function(input, output) {
         ## q <- c(q1(x), q2(x), q3(x))
         ## abline(v = q, col = 4, lwd = 2)
         ## axis(1, at = q, labels = c("Q1", "Q2", "Q3"), col.axis = 4)
-        
-        ## mtext("Created by Devan Becker", 
-        ##     side = 1, line = 3, adj = 1, cex = 0.75)
-        ## mtext("Github: DBecker7/DB7_TeachingApps", 
-        ##     side = 1, line = 4, adj = 1, cex = 0.75)
   })
 
   output$boxPlot <- renderPlot({
