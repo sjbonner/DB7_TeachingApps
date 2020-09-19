@@ -89,7 +89,7 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   ## Create data
-  mydata <<- reactive({
+  getdata <<- reactive({
     set.seed(input$seed)
     
     tibble(x=c(rnorm(input$n - input$outliers, 0, 1),
@@ -98,19 +98,21 @@ server <- function(input, output) {
   })
 
   output$distPlot <- renderPlot({
+
+    mydata <- getdata()
     
         bw <- ifelse(input$n > 100, 0.25, 0.75)
         
-        breakseq <- seq(floor(min(mydata()$x)) - bw, ceiling(max(mydata()$x)) + bw, bw)
+        breakseq <- seq(floor(min(mydata$x)) - bw, ceiling(max(mydata$x)) + bw, bw)
 
-        meanx <- mean(mydata()$x)
-        medianx <- median(mydata()$x)
-        height <- max(table(cut(mydata()$x, breakseq)))
+        meanx <- mean(mydata$x)
+        medianx <- median(mydata$x)
+        height <- max(table(cut(mydata$x, breakseq)))
         
-        ggplot(mydata(), aes(x = x)) + 
+        ggplot(mydata, aes(x = x)) + 
           geom_histogram(breaks = breakseq) +
           ylim(c(0, 1.2 * height)) +
-          xlim(1.2 * c(-1,1) * max(abs(mydata()$x))) + 
+          xlim(1.2 * c(-1,1) * max(abs(mydata$x))) + 
           labs(title = paste0("n = ", input$n, ", ",
                               "Skew = ", round(input$skew,2))) +
           annotate("segment", x = c(meanx, medianx), y = c(0,0),
@@ -137,17 +139,21 @@ server <- function(input, output) {
   })
 
   output$boxPlot <- renderPlot({
-    ggplot(mydata(), aes(x=x)) +
+    mydata <- getdata()
+    
+    ggplot(mydata, aes(x=x)) +
       geom_boxplot() +
-      xlim(1.2 * c(-1,1) * max(abs(mydata()$x)))
+      xlim(1.2 * c(-1,1) * max(abs(mydata$x)))
   })
 
   output$summText <- renderUI({
-
-    str1 <- paste("Mean:", round(mean(mydata()$x),2))
-    str2 <- paste("Median: ", round(median(mydata()$x),2))
-    str3 <- paste("Trimmed Mean (5%): ", round(mean(mydata()$x,.025),2))
-    str4 <- paste("Trimmed Mean (10%): ", round(mean(mydata()$x,.05),2))
+    mydata <- getdata()
+    
+    str0 <- "Measures of Central Tendency"
+    str1 <- paste("  Mean:", round(mean(mydata$x),2))
+    str2 <- paste("  Median: ", round(median(mydata$x),2))
+    str3 <- paste("  Trimmed Mean (5%): ", round(mean(mydata$x,.025),2))
+    str4 <- paste("  Trimmed Mean (10%): ", round(mean(mydata$x,.05),2))
     
     HTML(paste(str1, str2, str3, str4, sep = "<br/>"))
           
