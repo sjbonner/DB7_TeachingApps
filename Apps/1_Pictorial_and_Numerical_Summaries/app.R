@@ -31,7 +31,7 @@ ui <- fluidPage(
     ),
     
     # Application title
-  titlePanel("Measures of Central Tendency and Spread"),
+  titlePanel("Measures of Location and Variability"),
   
                                         # Sidebar with a slider input for number of bins 
   sidebarLayout(
@@ -70,7 +70,7 @@ ui <- fluidPage(
                          "Output Elements:",
                          choices = c("Histogram" = "histogram",
                            "Boxplot" = "boxplot",
-                           "Measures of Central Tendency" = "center",
+                           "Measures of Location" = "center",
                            "Measures of Spread" = "spread",
                            "Five Number Summary" = "fivenum"),
                          selected = "histogram"),
@@ -167,7 +167,7 @@ server <- function(input, output) {
     html <- ""
     
     if("center" %in% input$elements){
-      str0 <- "Measures of Central Tendency"
+      str0 <- "Measures of Location"
       str1 <- paste("  Mean:", round(mean(mydata$x),2))
       str2 <- paste("  Median: ", round(median(mydata$x),2))
       str3 <- paste("  Trimmed Mean (5%): ", round(mean(mydata$x,.025),2))
