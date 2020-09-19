@@ -31,9 +31,9 @@ ui <- fluidPage(
     ),
     
     # Application title
-    titlePanel("Measures of Central Tendency"),
-    
-    # Sidebar with a slider input for number of bins 
+  titlePanel("Measures of Central Tendency and Spread"),
+  
+                                        # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
       numericInput("seed",
@@ -72,7 +72,8 @@ ui <- fluidPage(
                            "Boxplot" = "boxplot",
                            "Measures of Central Tendency" = "center",
                            "Measures of Spread" = "spread",
-                           "Five Number Summary" = "fivenum")),
+                           "Five Number Summary" = "fivenum"),
+                         selected = "histogram"),
       submitButton("Update View", icon("refresh"))
     ),
         
@@ -99,12 +100,15 @@ server <- function(input, output) {
   getdata <<- reactive({
     set.seed(input$seed)
     
-    tibble(x=c(rnorm(input$n - input$outliers, 0, 1),
+    tibble(x=c(rnorm(input$n, 0, 1),
                rnorm(input$outliers, input$outlierseverity * ifelse(input$skew < 0, -1, 1),1))) %>%
       mutate(x = perturb(x,input$skew))
   })
 
   output$distPlot <- renderPlot({
+
+    if(!("histogram" %in% input$elements))
+      return(NULL)
 
     mydata <- getdata()
     
@@ -146,6 +150,9 @@ server <- function(input, output) {
   })
 
   output$boxPlot <- renderPlot({
+    if(!("boxplot" %in% input$elements))
+      return(NULL)
+    
     mydata <- getdata()
 
     bw <- ifelse(input$n > 100, 0.25, 0.75)
