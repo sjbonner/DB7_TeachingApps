@@ -66,7 +66,7 @@ ui <- fluidPage(
                   value = 1,
                   step = .25,
                   animate = list(interval = 100)),
-      actionButton("doit", "Click me for new data")
+      submitButton("Update View", icon("refresh"))
     ),
         
     ## Show a plot of the generated distribution
@@ -90,8 +90,6 @@ ui <- fluidPage(
 server <- function(input, output) {
   ## Create data
   mydata <<- reactive({
-    input$doit
-
     set.seed(input$seed)
     
     tibble(x=c(rnorm(input$n - input$outliers, 0, 1),
@@ -101,8 +99,6 @@ server <- function(input, output) {
 
   output$distPlot <- renderPlot({
     
-        input$doit
-        
         bw <- ifelse(input$n > 100, 0.25, 0.75)
         
         breakseq <- seq(floor(min(mydata()$x)) - bw, ceiling(max(mydata()$x)) + bw, bw)
@@ -141,16 +137,13 @@ server <- function(input, output) {
   })
 
   output$boxPlot <- renderPlot({
-    input$doit
-
     ggplot(mydata(), aes(x=x)) +
       geom_boxplot() +
       xlim(1.2 * c(-1,1) * max(abs(mydata()$x)))
   })
 
   output$summText <- renderUI({
-    input$doit
-    
+
     str1 <- paste("Mean:", round(mean(mydata()$x),2))
     str2 <- paste("Median: ", round(median(mydata()$x),2))
     str3 <- paste("Trimmed Mean (5%): ", round(mean(mydata()$x,.025),2))
