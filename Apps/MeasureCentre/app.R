@@ -99,9 +99,11 @@ server <- function(input, output) {
   ## Create data
   getdata <<- reactive({
     set.seed(input$seed)
+
+    half_x <- rnorm(input$n/2, 0, 1)
+    outliers <- rnorm(input$outliers, input$outlierseverity * ifelse(input$skew < 0, -1, 1),1)
     
-    tibble(x=c(rnorm(input$n, 0, 1),
-               rnorm(input$outliers, input$outlierseverity * ifelse(input$skew < 0, -1, 1),1))) %>%
+    tibble(x=c(half_x, -half_x, outliers)) %>%
       mutate(x = perturb(x,input$skew))
   })
 
@@ -112,9 +114,9 @@ server <- function(input, output) {
 
     mydata <- getdata()
     
-        bw <- ifelse(input$n > 100, 0.25, 0.75)
-        breakseq <- seq(floor(min(mydata$x)) - bw, ceiling(max(mydata$x)) + bw, bw)
-        xlim <- c(-1,1) * max(abs(breakseq))
+    bw <- ifelse(input$n > 100, 0.25, 0.75)
+    lim <- bw * ceiling(max(abs(mydata$x))/bw)
+    breakseq <- seq(-lim - bw, lim + bw, bw)
         
         meanx <- mean(mydata$x)
         medianx <- median(mydata$x)
@@ -123,7 +125,7 @@ server <- function(input, output) {
         ggplot(mydata, aes(x = x)) + 
           geom_histogram(breaks = breakseq) +
           ylim(c(0, 1.2 * height)) +
-          xlim(xlim) +
+          xlim(c(-lim - bw, lim + bw)) + 
           labs(title = paste0("n = ", input$n, ", ",
                               "Skew = ", round(input$skew,2))) +
           annotate("segment", x = c(meanx, medianx), y = c(0,0),
@@ -156,12 +158,11 @@ server <- function(input, output) {
     mydata <- getdata()
 
     bw <- ifelse(input$n > 100, 0.25, 0.75)
-    breakseq <- seq(floor(min(mydata$x)) - bw, ceiling(max(mydata$x)) + bw, bw)
-    xlim <- c(-1,1) * max(abs(breakseq))
+    lim <- bw * ceiling(max(abs(mydata$x))/bw)
         
     ggplot(mydata, aes(x=x)) +
       geom_boxplot() +
-      xlim(xlim)
+      xlim(c(-lim - bw, lim + bw))
   })
 
   output$summText <- renderUI({
