@@ -73,7 +73,7 @@ ui <- fluidPage(
                            "Measures of Location" = "center",
                            "Measures of Spread" = "spread",
                            "Five Number Summary" = "fivenum"),
-                         selected = "histogram"),
+                         selected = c("histogram", "boxplot")),
       submitButton("Update View", icon("refresh"))
     ),
         
