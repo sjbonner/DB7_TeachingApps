@@ -63,7 +63,7 @@ ui <- fluidPage(
                   "Outlier severity:",
                   min = 0,
                   max = 30,
-                  value = 1,
+                  value = 10,
                   step = .25,
                   animate = list(interval = 100)),
       checkboxGroupInput("elements",
