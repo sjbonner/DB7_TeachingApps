@@ -182,7 +182,7 @@ server <- function(input, output) {
       str2 <- paste("  Standard Deviation: ", round(sd(mydata$x),2))
       str3 <- paste("  Fourth Spread (IQR): ", round(c(-1,1) %*% quantile(mydata$x,c(.25,.75)),2))
     
-      html <- paste(html,str0,str1, str2, str3, str4, "<br/><br/>" ,sep = "<br/>")
+      html <- paste(html,str0,str1, str2, str3, "<br/><br/>" ,sep = "<br/>")
     }
 
     if("fivenum" %in% input$elements){
